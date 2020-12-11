@@ -5,7 +5,7 @@
 Capstone project for bachelor thesis of electrical engineering degree at Departemen Teknik Elektro dan Teknologi Informasi, Universitas Gadjah Mada 2020.
 
 ## Disclaimer
-For educational research purpose only, not intended for clinical use nor commercial use. <br/>
+For educational research purpose only, not intended for clinical nor commercial use. <br/>
 **Do With Your Own Risk!**
 
 ## Features
