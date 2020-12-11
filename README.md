@@ -1,33 +1,53 @@
-# Introduction
- This is a simple GUI for YOLO darknet detection.
+# NeuralSIGHT-CapstoneProject
+> NeuralSIGHT-CapstoneProject is a GUI application that perform mass detection on mammogram images using YOLOv4 detector. 
+
+## Motivation
+Capstone project for bachelor thesis of electrical engineering degree at Departemen Teknik Elektro dan Teknologi Informasi, Universitas Gadjah Mada 2020.
+
+## Disclaimer
+For educational research purpose only, not intended for clinical use nor commercial use. <br/>
+Do with your own risk!
+
+## Features
+* Mass detection
+* CPU based inference (OpenCV-DNN)
+
+## Screenshoots
+![results](screenshoots/results.png)
 
 ## Requirements
-   - **PyQt5**
-   - **YOLO darknet installed**
-
-## How To Use
-
-#### Step 0: Compile YOLO darknet 
-
-Follow AlexeyAB's instruction of [How to compile YOLO darknet on Linux or Windows](https://github.com/AlexeyAB/darknet#how-to-compile-on-linuxmacos-using-cmake)
-
-#### Step 1: Install PyQt5 
-
-Simple installation from PyPI
-```bash
-pip install PyQt5
+* Python >= 3.6
+* PyQt5
+* OpenCV >= 4.4.0
 ```
-From Conda
-```bash
-conda install -c anaconda pyqt
+pip install -r requirements.txt
 ```
 
-#### Step 2: Setup Folder
+## How to use
+#### Step 1: Setting model configs
+Put `yolov4-obj.cfg` and `obj.names` files at data folder.
 
-- Move `main.py`,`main_window.py`, and `splashscreen.py` to your darknet folder. 
-- Edit `main_window.py` on line 190 to your darknet data folder directory path.
-- If your OS is Windows or you have different name for your own cfg or weights files then edit `main_window.py` on line 200 to `darknet.exe detector test cfg/[your configuration].data cfg/[your configuration].cfg [your weights].weights data/data.jpg -dont_show`
+#### Step 2: Preparing yolov4 weights
+Put yolo weights as `yolov4-obj_final.weights` at weights folder.<br/>
+Download the models [here]()
 
-#### Step 3: Run Program
-Run `main.py` 
+#### Step 3: run main.py
+```
+cd NeuralSIGHT-CapstoneProject
+python main.py
+```
+
+## Model Evaluation
+The model was trained from CBIS-DDSM using YOLOv4 pretrained weights from COCO then was evaluated on MIAS and INbreast:
+|    Test dataset    |  AP50  | Precision | Recall | F1-Score |
+| :-------------: | :-----: | :-----: | :------: | :------------: |
+| MIAS | 45.73 | 0.705 | 0.534 | 0.608 |
+| INbreast | 51.28 | 0.771 | 0.552 | 0.643| 
+
+## NeuralSIGHT Team
+* [fahriwps](https://github.com/fahriwps)
+* [mariojy10](https://github.com/mariojy10)
+
+
+
 
