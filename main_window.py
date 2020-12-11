@@ -1,13 +1,15 @@
 ################################################################################
 ## 
 ## Created by: fahriwps
+## Modified by: mariojy10 12/11/2020
 ## 
 ################################################################################
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap, QIcon, QImage
 from PyQt5.QtCore import QCoreApplication
 import subprocess
+import cv2
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -147,7 +149,8 @@ class Ui_MainWindow(object):
         self.pushButton_3.setFont(font)
         self.pushButton_3.setObjectName("pushButton_3")
         self.horizontalLayout_3.addWidget(self.pushButton_3)
-        self.pushButton_3.clicked.connect(self.test_cmd)
+        # self.pushButton_3.clicked.connect(self.test_cmd)
+        self.pushButton_3.clicked.connect(self.predict)
         self.pushButton_3.setIcon(QIcon('search.png'))
 
         # push button Save File
@@ -203,24 +206,69 @@ class Ui_MainWindow(object):
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"OUTPUT", None))
 
     def browse_file(self):
-        directory, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Browse File", "", 'Image File (*.png *.PNG *.jpg *.JPG)')
-        print(directory)
-        self.label.setPixmap(QtGui.QPixmap(directory))
-        self.lineEdit.setText('{}'.format(directory))
+        self.directory, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Browse File", "", 'Image File (*.png *.PNG *.jpg *.JPG)')
+        self.label.setPixmap(QtGui.QPixmap(self.directory))
+        self.label.setScaledContents(True)
+        self.lineEdit.setText('{}'.format(self.directory))
         
-        # save file in an absolute path test folder of darknet
-        saveFile, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save File", "/home/fahriprs/darknet/data/data.jpg", 'Image File (*.jpg *.JPG)')
-        pixmap = self.label.pixmap()
-        pixmap.save(saveFile)
+        # # save file in an absolute path test folder of darknet
+        # saveFile, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save File", "/home/fahriprs/darknet/data/data.jpg", 'Image File (*.jpg *.JPG)')
+        # pixmap = self.label.pixmap()
+        # pixmap.save(saveFile)
 
     def save_predict(self):
         savePredict, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save Predict", "", "Image File (*.png *.PNG *.jpg *.JPG)")
         pixmap2 = self.label_2.pixmap()
         pixmap2.save(savePredict)
     
-    def test_cmd(self):
-        train_cmd_str = './darknet detector test cfg/obj.data cfg/custom.cfg custom.weights data/data.jpg -dont_show' # must be in one folder with darknet directory
-        print("\n calling ", train_cmd_str,"\n")
-        subprocess.call(train_cmd_str,shell=True)
-        imgDetect = QPixmap('predictions.jpg')
-        self.label_2.setPixmap(QtGui.QPixmap(imgDetect))
+    # def test_cmd(self):
+    #     train_cmd_str = './darknet detector test cfg/obj.data cfg/custom.cfg custom.weights data/data.jpg -dont_show' # must be in one folder with darknet directory
+    #     print("\n calling ", train_cmd_str,"\n")
+    #     subprocess.call(train_cmd_str,shell=True)
+    #     imgDetect = QPixmap('predictions.jpg')
+    #     self.label_2.setPixmap(QtGui.QPixmap(imgDetect))
+
+    def predict(self):
+        
+        def draw_bboxs(img,classes,confidences,boxes):    
+            for class_id,confidence,box in zip(classes.flatten(),confidences.flatten(),boxes):
+                label = '%.2f' % confidence
+                label = '%s: %s' % (names[class_id], label)
+                label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 1.5, 1)
+                left, top, width, height = box
+                top = max(top, label_size[1])
+                cv2.rectangle(img, box, color=(0, 255, 0), thickness=3)
+                cv2.rectangle(img, (left, top - label_size[1]), (left + label_size[0], top + base_line), (255, 255, 255), cv2.FILLED)
+                cv2.putText(img, label, (left, top), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 0), 2)
+        
+        obj_names = "data/obj.names"
+        with open(obj_names,'r') as file:
+            names = file.read().rstrip("\n").split('\n')
+        
+        cfg = "data/yolov4-obj.cfg"
+        with open(cfg, 'r') as f:
+            lines = f.readlines()
+            lines = [line.strip() for line in lines]
+        width = list(filter(lambda x: "width" in x, lines))[0]
+        width = int(width.split('=',1)[-1])
+        height = list(filter(lambda x: "height" in x, lines))[0]
+        height = int(height.split('=',1)[-1])
+        
+        weights = "weights/yolov4-obj_final.weights"
+        confidence = 0.25
+        nms = 0.45
+
+        net = cv2.dnn_DetectionModel(cfg,weights)
+        net.setInputSize(width=width,height=height)
+        net.setInputScale(1.0/255.0)
+        net.setInputSwapRB(True)
+
+        self.input_image = cv2.imread(self.directory,-1)
+        classes,confidences,boxes = net.detect(self.input_image,confThreshold=confidence,nmsThreshold=nms)
+        self.output_image = self.input_image.copy()        
+        if not isinstance(classes,tuple):
+            draw_bboxs(self.output_image,classes,confidences,boxes)    
+        
+        self.output_image = QImage(self.output_image.data, self.output_image.shape[1], self.output_image.shape[0], QtGui.QImage.Format_RGB888).rgbSwapped()
+        self.label_2.setPixmap(QtGui.QPixmap.fromImage(self.output_image))
+        self.label_2.setScaledContents(True)
