@@ -6,7 +6,7 @@ Capstone project for bachelor thesis of electrical engineering degree at Departe
 
 ## Disclaimer
 For educational research purpose only, not intended for clinical use nor commercial use. <br/>
-Do with your own risk!
+**Do With Your Own Risk!**
 
 ## Features
 * Mass detection
@@ -38,7 +38,7 @@ python main.py
 ```
 
 ## Model Evaluation
-The model was trained from CBIS-DDSM using YOLOv4 pretrained weights from COCO then was evaluated on MIAS and INbreast:
+The model was trained from CBIS-DDSM using YOLOv4 pretrained weights from COCO then evaluated on MIAS and INbreast databases:
 |    Test dataset    |  AP50  | Precision | Recall | F1-Score |
 | :-------------: | :-----: | :-----: | :------: | :------------: |
 | MIAS | 45.73 | 0.705 | 0.534 | 0.608 |
