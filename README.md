@@ -1,5 +1,5 @@
 # NeuralSIGHT-CapstoneProject
-> NeuralSIGHT-CapstoneProject is a GUI application that perform mass detection on mammogram images using YOLOv4 detector. 
+NeuralSIGHT-CapstoneProject is a GUI application that perform mass detection on mammogram images using YOLOv4 detector. 
 
 ## Motivation
 Capstone project for bachelor thesis of electrical engineering degree at Departemen Teknik Elektro dan Teknologi Informasi, Universitas Gadjah Mada 2020.
@@ -29,7 +29,7 @@ Put `yolov4-obj.cfg` and `obj.names` files at data folder.
 
 #### Step 2: Preparing yolov4 weights
 Put yolo weights as `yolov4-obj_final.weights` at weights folder.<br/>
-Download the models [here]()
+Download the models [here](https://drive.google.com/file/d/1QEAY_EwaHNtZQmCGA-ouxouInd61f7e3/view?usp=sharing)
 
 #### Step 3: run main.py
 ```
