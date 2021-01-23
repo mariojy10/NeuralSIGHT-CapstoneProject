@@ -48,6 +48,9 @@ The model was trained from CBIS-DDSM using YOLOv4 pretrained weights from COCO t
 * [fahriwps](https://github.com/fahriwps)
 * [mariojy10](https://github.com/mariojy10)
 
+## Archived
+EOL (23/01/2021)
+
 
 
 
